@@ -17,10 +17,14 @@ const COLORS = [
 
 // --- STATE ---
 let state = {
-    names: [],
+    members: [], // { name: string, active: boolean }
     timerSettings: {
         enabled: true,
         duration: 120
+    },
+    settings: {
+        winnerAction: 'auto', // Default to auto
+        hideNames: false
     }
 };
 
@@ -86,6 +90,13 @@ function loadState() {
     if (raw) {
         try {
             const parsed = JSON.parse(raw);
+
+            // Migration: Convert old 'names' array to 'members' object array
+            if (parsed.names && Array.isArray(parsed.names)) {
+                parsed.members = parsed.names.map(name => ({ name, active: true }));
+                delete parsed.names;
+            }
+
             state = { ...state, ...parsed };
             // Ensure timer duration is valid
             timer.remainingTime = state.timerSettings.duration;
@@ -119,7 +130,8 @@ const PI2 = Math.PI * 2;
 
 function spinWheel() {
     if (wheel.isSpinning) return;
-    if (state.names.length === 0) {
+    const activeMembers = state.members.filter(m => m.active);
+    if (activeMembers.length === 0) {
         alert("Please add some team members first!");
         return;
     }
@@ -153,7 +165,10 @@ function updatePhysics() {
 function drawWheel() {
     if (!wheel.ctx) return;
     const ctx = wheel.ctx;
-    const count = state.names.length;
+
+    // Filter active members
+    const activeMembers = state.members.filter(m => m.active);
+    const count = activeMembers.length;
 
     ctx.clearRect(0, 0, wheel.size, wheel.size);
 
@@ -177,6 +192,7 @@ function drawWheel() {
     // Draw Segments
     for (let i = 0; i < count; i++) {
         const angle = wheel.rotation + (i * arcSize);
+        const member = activeMembers[i];
 
         ctx.beginPath();
         ctx.moveTo(wheel.center, wheel.center);
@@ -199,9 +215,13 @@ function drawWheel() {
         ctx.textAlign = 'right';
         ctx.fillStyle = '#000';
         ctx.font = 'bold 16px Inter';
-        // Truncate long names
-        let label = state.names[i];
-        if (label.length > 15) label = label.substring(0, 12) + '...';
+
+        let label = member.name;
+        if (state.settings?.hideNames) {
+            label = '***';
+        } else {
+            if (label.length > 15) label = label.substring(0, 12) + '...';
+        }
         ctx.fillText(label, wheel.center - 40, 6);
         ctx.restore();
     }
@@ -213,24 +233,7 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-function determineWinner() {
-    const count = state.names.length;
-    const arcSize = PI2 / count;
 
-    let pointerAngle = (3 * Math.PI / 2) - wheel.rotation;
-    pointerAngle = pointerAngle % PI2;
-    if (pointerAngle < 0) pointerAngle += PI2;
-
-    const winningIndex = Math.floor(pointerAngle / arcSize);
-    const winnerName = state.names[winningIndex];
-
-    document.getElementById('winner-name').textContent = winnerName;
-    document.getElementById('winner-display').classList.remove('hidden');
-
-    if (state.timerSettings.enabled) {
-        startTimer();
-    }
-}
 
 // --- TIMER LOGIC ---
 function startTimer() {
@@ -286,20 +289,37 @@ function addMember(e) {
     const name = input.value.trim();
 
     if (name) {
-        state.names.push(name);
+        state.members.push({ name: name, active: true });
         saveState();
         renderNamesList();
         input.value = '';
-        drawWheel(); // Redraw immediately
+        drawWheel();
     }
 }
 
 // Make globally available for onclick
 window.removeMember = function (index) {
-    state.names.splice(index, 1);
-    saveState();
-    renderNamesList();
-    drawWheel();
+    if (state.members[index]) {
+        state.members[index].active = false;
+        saveState();
+        renderNamesList();
+        drawWheel();
+    }
+}
+
+function restartRound() {
+    if (confirm('Restart round? All names will be restored to the wheel.')) {
+        state.members.forEach(m => m.active = true);
+
+        // Clear winner display
+        document.getElementById('winner-display').classList.add('hidden');
+        document.getElementById('winner-name').textContent = '-';
+
+        saveState();
+        renderNamesList();
+        drawWheel();
+        resetTimer(true);
+    }
 }
 
 function renderNamesList() {
@@ -307,13 +327,23 @@ function renderNamesList() {
     if (!list) return;
     list.innerHTML = '';
 
-    state.names.forEach((name, index) => {
+    const hide = state.settings?.hideNames;
+
+    state.members.forEach((member, index) => {
         const li = document.createElement('li');
         li.className = 'member-item';
+        if (!member.active) li.classList.add('inactive');
+
+        const displayName = hide ? '***' : member.name;
+
+        // Show remove button only if active
+        const btnHtml = member.active
+            ? `<button class="btn remove-btn" onclick="removeMember(${index})">&times;</button>`
+            : '';
 
         li.innerHTML = `
-            <span>${name}</span>
-            <button class="btn remove-btn" onclick="removeMember(${index})">&times;</button>
+            <span>${displayName}</span>
+            ${btnHtml}
         `;
         list.appendChild(li);
     });
@@ -350,4 +380,113 @@ function setupEventListeners() {
     document.getElementById('add-member-form')?.addEventListener('submit', addMember);
 
     document.getElementById('factory-reset')?.addEventListener('click', factoryReset);
+
+    // Settings Toggle
+    document.getElementById('settings-toggle')?.addEventListener('click', () => {
+        document.getElementById('settings-panel').classList.toggle('hidden');
+    });
+
+    // Winner Action Radio
+    document.querySelectorAll('input[name="winner-action"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            state.settings.winnerAction = e.target.value;
+            saveState();
+        });
+    });
+
+    // Modal Actions
+    document.getElementById('btn-remove')?.addEventListener('click', () => handleSelectedDecision('remove'));
+    document.getElementById('btn-keep')?.addEventListener('click', () => handleSelectedDecision('keep'));
+    document.getElementById('btn-spin-again')?.addEventListener('click', () => handleSelectedDecision('spin-again'));
+
+    // Update settings UI on load
+    const savedAction = state.settings?.winnerAction || 'popup';
+    const radio = document.querySelector(`input[name="winner-action"][value="${savedAction}"]`);
+    if (radio) radio.checked = true;
+
+    // Privacy Toggle
+    document.getElementById('hide-names-toggle')?.addEventListener('change', (e) => {
+        state.settings.hideNames = e.target.checked;
+        saveState();
+        renderNamesList();
+        drawWheel();
+    });
+
+    // Load Privacy State
+    if (state.settings.hideNames) {
+        document.getElementById('hide-names-toggle').checked = true;
+    }
+
+    // Restart Round
+    document.getElementById('restart-round-btn')?.addEventListener('click', restartRound);
+}
+
+// --- SELECTED HANDLING ---
+let currentSelectedIndex = -1;
+
+function determineWinner() {
+    // We only spin with active members, so we need to map the result back to the main array index or just use the filtered list logic
+    // CAUTION: The wheel segments are drawn based on *Active* members.
+    // So if winningIndex is 2, it means the 3rd *Active* member.
+
+    const activeMembers = state.members.filter(m => m.active);
+    const count = activeMembers.length;
+    const arcSize = PI2 / count;
+
+    let pointerAngle = (3 * Math.PI / 2) - wheel.rotation;
+    pointerAngle = pointerAngle % PI2;
+    if (pointerAngle < 0) pointerAngle += PI2;
+
+    const winningActiveIndex = Math.floor(pointerAngle / arcSize);
+    const winnerMember = activeMembers[winningActiveIndex];
+
+    // Find absolute index in state.members
+    const absoluteIndex = state.members.indexOf(winnerMember);
+    currentSelectedIndex = absoluteIndex;
+
+    const winnerName = winnerMember.name;
+    const action = state.settings?.winnerAction || 'auto';
+
+    // Start timer immediately if enabled (as requested: "popup confirmationda timer başlamıyor... saymalı")
+    if (state.timerSettings.enabled) {
+        startTimer();
+    }
+
+    if (action === 'auto') {
+        // Auto remove mode
+        // Show temporary winner display (sidebar)
+        document.getElementById('winner-name').textContent = winnerName;
+        document.getElementById('winner-display').classList.remove('hidden');
+
+        // Remove member automatically
+        removeMember(absoluteIndex);
+
+    } else {
+        // Popup mode
+        // Show Modal
+        document.getElementById('modal-winner-name').textContent = winnerName;
+        document.getElementById('winner-modal').classList.remove('hidden');
+
+        // Also update sidebar
+        document.getElementById('winner-name').textContent = winnerName;
+    }
+}
+
+function handleSelectedDecision(decision) {
+    document.getElementById('winner-modal').classList.add('hidden');
+
+    if (decision === 'remove') {
+        if (currentSelectedIndex !== -1) {
+            removeMember(currentSelectedIndex);
+        }
+        document.getElementById('winner-display').classList.remove('hidden');
+    } else if (decision === 'keep') {
+        // Just keep, show in sidebar
+        document.getElementById('winner-display').classList.remove('hidden');
+    } else if (decision === 'spin-again') {
+        // Timer should ideally reset? Or keep running? 
+        // Typically spin again means "ignore this result". Reset timer.
+        resetTimer(false);
+        spinWheel();
+    }
 }
