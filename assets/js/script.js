@@ -1,5 +1,5 @@
 /**
- * Daily Standup Wheel - Antigravity Edition
+ * Daily Standup Wheel
  * Core Logic
  */
 
@@ -25,7 +25,8 @@ let state = {
     settings: {
         winnerAction: 'auto', // Default to auto
         hideNames: false
-    }
+    },
+    lastWinnerIndex: -1 // Persist pending winner removal for auto mode
 };
 
 let wheel = {
@@ -130,6 +131,21 @@ const PI2 = Math.PI * 2;
 
 function spinWheel() {
     if (wheel.isSpinning) return;
+
+    // --- REMOVAL LOGIC (delete winner after click spin button again) ---
+    if (state.lastWinnerIndex !== -1) {
+        // Only remove if we are still in auto mode or just cleaning up
+        if (state.settings.winnerAction === 'auto') {
+            if (state.members[state.lastWinnerIndex] && state.members[state.lastWinnerIndex].active) {
+                state.members[state.lastWinnerIndex].active = false;
+            }
+        }
+        state.lastWinnerIndex = -1;
+        saveState();
+        renderNamesList();
+        drawWheel();
+    }
+
     const activeMembers = state.members.filter(m => m.active);
     if (activeMembers.length === 0) {
         alert("Please add some team members first!");
@@ -144,7 +160,7 @@ function spinWheel() {
     resetTimer(false);
 
     // Initial kick
-    wheel.velocity = 0.3 + Math.random() * 0.2;
+    wheel.velocity = 0.4 + Math.random() * 0.2;
     wheel.isSpinning = true;
 }
 
@@ -152,7 +168,7 @@ function updatePhysics() {
     if (!wheel.isSpinning) return;
 
     wheel.rotation += wheel.velocity;
-    wheel.velocity *= 0.985; // Friction
+    wheel.velocity *= 0.96; // Friction
 
     // Stop threshold
     if (wheel.velocity < 0.001) {
@@ -200,7 +216,7 @@ function drawWheel() {
         ctx.closePath();
 
         // Color
-        ctx.fillStyle = COLORS[i % COLORS.length];
+        ctx.fillStyle = COLORS[state.members.indexOf(member) % COLORS.length];
         ctx.fill();
 
         // Border
@@ -214,7 +230,7 @@ function drawWheel() {
         ctx.rotate(angle + arcSize / 2);
         ctx.textAlign = 'right';
         ctx.fillStyle = '#000';
-        ctx.font = 'bold 16px Inter';
+        ctx.font = 'bold 18px Inter';
 
         let label = member.name;
         if (state.settings?.hideNames) {
@@ -422,7 +438,6 @@ function setupEventListeners() {
 }
 
 // --- SELECTED HANDLING ---
-let currentSelectedIndex = -1;
 
 function determineWinner() {
     // We only spin with active members, so we need to map the result back to the main array index or just use the filtered list logic
@@ -442,7 +457,8 @@ function determineWinner() {
 
     // Find absolute index in state.members
     const absoluteIndex = state.members.indexOf(winnerMember);
-    currentSelectedIndex = absoluteIndex;
+    state.lastWinnerIndex = absoluteIndex;
+    saveState(); // Persist this so we know who to remove on next spin
 
     const winnerName = winnerMember.name;
     const action = state.settings?.winnerAction || 'auto';
@@ -458,8 +474,7 @@ function determineWinner() {
         document.getElementById('winner-name').textContent = winnerName;
         document.getElementById('winner-display').classList.remove('hidden');
 
-        // Remove member automatically
-        removeMember(absoluteIndex);
+        // DO NOT remove immediately. Wait for next spin.
 
     } else {
         // Popup mode
@@ -476,8 +491,10 @@ function handleSelectedDecision(decision) {
     document.getElementById('winner-modal').classList.add('hidden');
 
     if (decision === 'remove') {
-        if (currentSelectedIndex !== -1) {
-            removeMember(currentSelectedIndex);
+        if (state.lastWinnerIndex !== -1) {
+            removeMember(state.lastWinnerIndex);
+            state.lastWinnerIndex = -1;
+            saveState();
         }
         document.getElementById('winner-display').classList.remove('hidden');
     } else if (decision === 'keep') {
