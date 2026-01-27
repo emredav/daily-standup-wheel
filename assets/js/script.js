@@ -331,6 +331,7 @@ function restartRound() {
         document.getElementById('winner-display').classList.add('hidden');
         document.getElementById('winner-name').textContent = '-';
 
+        state.lastWinnerIndex = -1;
         saveState();
         renderNamesList();
         drawWheel();
