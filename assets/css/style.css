@@ -695,3 +695,22 @@ input:checked+.slider:before {
 .checkbox-wrapper input[type="checkbox"]:checked+label {
     color: var(--accent-primary);
 }
+
+/* Total Elapsed Timer Panel */
+.total-timer-panel {
+    border-color: var(--accent-primary);
+    background: rgba(204, 255, 0, 0.05);
+}
+
+.total-timer-panel .panel-header h3 {
+    color: var(--accent-primary);
+}
+
+.total-time-display {
+    font-size: 2.5rem;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--accent-primary);
+    text-shadow: 0 0 10px rgba(204, 255, 0, 0.2);
+}

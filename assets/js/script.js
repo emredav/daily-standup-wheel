@@ -26,7 +26,8 @@ let state = {
         winnerAction: 'auto', // Default to auto
         hideNames: false
     },
-    lastWinnerIndex: -1 // Persist pending winner removal for auto mode
+    lastWinnerIndex: -1, // Persist pending winner removal for auto mode
+    elapsedStartTime: null // timestamp when first spin happened
 };
 
 let wheel = {
@@ -45,6 +46,10 @@ let timer = {
     isRunning: false
 };
 
+let elapsedTimer = {
+    intervalId: null
+};
+
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
     initDOM();
@@ -52,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     renderNamesList();
     updateTimerDisplay(state.timerSettings.duration);
+    if (state.elapsedStartTime) {
+        startElapsedTimer();
+    }
+    updateElapsedDisplay(); // Initial draw
     animate();
 });
 
@@ -158,6 +167,13 @@ function spinWheel() {
 
     // Reset timer
     resetTimer(false);
+
+    // Start Total Elapsed Timer on first spin
+    if (!state.elapsedStartTime) {
+        state.elapsedStartTime = Date.now();
+        saveState();
+        startElapsedTimer();
+    }
 
     // Initial kick
     wheel.velocity = 0.4 + Math.random() * 0.2;
@@ -299,6 +315,40 @@ function updateTimerIcons() {
     }
 }
 
+
+// --- TOTAL ELAPSED TIMER ---
+function startElapsedTimer() {
+    if (elapsedTimer.intervalId) clearInterval(elapsedTimer.intervalId);
+
+    // For simplicity, we just update the display every second based on Date.now() - state.elapsedStartTime
+
+    elapsedTimer.intervalId = setInterval(() => {
+        updateElapsedDisplay();
+    }, 1000);
+}
+
+function stopElapsedTimer() {
+    if (elapsedTimer.intervalId) {
+        clearInterval(elapsedTimer.intervalId);
+        elapsedTimer.intervalId = null;
+    }
+}
+
+function updateElapsedDisplay() {
+    const el = document.getElementById('total-time-display');
+    if (!el) return;
+
+    if (!state.elapsedStartTime) {
+        el.textContent = "00:00";
+        return;
+    }
+
+    const diff = Math.floor((Date.now() - state.elapsedStartTime) / 1000);
+    const m = Math.floor(diff / 60).toString().padStart(2, '0');
+    const s = (diff % 60).toString().padStart(2, '0');
+    el.textContent = `${m}:${s}`;
+}
+
 // --- LIST MANAGEMENT ---
 function addMember(e) {
     if (e) e.preventDefault();
@@ -349,6 +399,12 @@ function restartRound() {
         renderNamesList();
         drawWheel();
         resetTimer(true);
+
+        // Reset Total Elapsed Timer
+        stopElapsedTimer();
+        state.elapsedStartTime = null;
+        saveState();
+        updateElapsedDisplay();
     }
 }
 
