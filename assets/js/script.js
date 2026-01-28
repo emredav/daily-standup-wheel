@@ -262,9 +262,6 @@ function startTimer() {
         timer.remainingTime--;
         updateTimerDisplay(timer.remainingTime);
 
-        if (timer.remainingTime <= 0) {
-            pauseTimer();
-        }
     }, 1000);
 }
 
@@ -283,9 +280,13 @@ function resetTimer(autoUpdateDisplay = true) {
 function updateTimerDisplay(seconds) {
     const el = document.getElementById('time-display');
     if (!el) return;
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    el.textContent = `${m}:${s}`;
+
+    const isNegative = seconds < 0;
+    const absSeconds = Math.abs(seconds);
+
+    const m = Math.floor(absSeconds / 60).toString().padStart(2, '0');
+    const s = (absSeconds % 60).toString().padStart(2, '0');
+    el.textContent = `${isNegative ? '-' : ''}${m}:${s}`;
 }
 
 function updateTimerIcons() {
@@ -323,6 +324,18 @@ window.removeMember = function (index) {
     }
 }
 
+// Hard delete member
+window.deleteMember = function (index) {
+    if (state.members[index]) {
+        if (confirm('Are you sure you want to permanently delete this member? This cannot be undone.')) {
+            state.members.splice(index, 1);
+            saveState();
+            renderNamesList();
+            drawWheel();
+        }
+    }
+}
+
 function restartRound() {
     if (confirm('Restart round? All names will be restored to the wheel.')) {
         state.members.forEach(m => m.active = true);
@@ -354,13 +367,21 @@ function renderNamesList() {
         const displayName = hide ? '***' : member.name;
 
         // Show remove button only if active
-        const btnHtml = member.active
-            ? `<button class="btn remove-btn" onclick="removeMember(${index})">&times;</button>`
-            : '';
+        let actionsHtml = '';
+
+        if (member.active) {
+            actionsHtml += `<button class="btn remove-btn" onclick="removeMember(${index})" title="Remove from round">&times;</button>`;
+        }
+
+        // Add Delete Button
+        const deleteIcon = `<svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`;
+        actionsHtml += `<button class="btn delete-btn" onclick="deleteMember(${index})" title="Permanently Delete">${deleteIcon}</button>`;
 
         li.innerHTML = `
             <span>${displayName}</span>
-            ${btnHtml}
+            <div class="member-actions">
+                ${actionsHtml}
+            </div>
         `;
         list.appendChild(li);
     });
@@ -502,7 +523,6 @@ function handleSelectedDecision(decision) {
         // Just keep, show in sidebar
         document.getElementById('winner-display').classList.remove('hidden');
     } else if (decision === 'spin-again') {
-        // Timer should ideally reset? Or keep running? 
         // Typically spin again means "ignore this result". Reset timer.
         resetTimer(false);
         spinWheel();

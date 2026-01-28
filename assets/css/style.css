@@ -291,6 +291,30 @@ input[type="number"]:focus {
     color: #ff4444;
 }
 
+.member-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.delete-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+    color: #ff0000;
+    background: rgba(255, 0, 0, 0.1);
+}
+
 /* Wheel Area */
 .wheel-container {
     position: relative;
