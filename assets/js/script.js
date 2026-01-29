@@ -513,6 +513,36 @@ function setupEventListeners() {
 
     // Restart Round
     document.getElementById('restart-round-btn')?.addEventListener('click', restartRound);
+
+    // Export/Import
+    document.getElementById('export-btn')?.addEventListener('click', exportMembers);
+    document.getElementById('import-btn')?.addEventListener('click', () => {
+        document.getElementById('import-options-modal').classList.remove('hidden');
+    });
+
+    // Import Modal Actions
+    document.getElementById('btn-cancel-import')?.addEventListener('click', () => {
+        document.getElementById('import-options-modal').classList.add('hidden');
+    });
+
+    document.getElementById('btn-import-file')?.addEventListener('click', () => {
+        document.getElementById('file-import-input').click();
+    });
+
+    document.getElementById('file-import-input')?.addEventListener('change', handleFileImport);
+
+    document.getElementById('btn-import-text')?.addEventListener('click', () => {
+        document.getElementById('import-options-modal').classList.add('hidden');
+        document.getElementById('text-import-modal').classList.remove('hidden');
+        document.getElementById('import-textarea').value = '';
+        document.getElementById('import-textarea').focus();
+    });
+
+    document.getElementById('btn-cancel-text-import')?.addEventListener('click', () => {
+        document.getElementById('text-import-modal').classList.add('hidden');
+    });
+
+    document.getElementById('btn-confirm-text-import')?.addEventListener('click', handleTextImport);
 }
 
 // --- SELECTED HANDLING ---
@@ -584,3 +614,80 @@ function handleSelectedDecision(decision) {
         spinWheel();
     }
 }
+// --- EXPORT / IMPORT ---
+
+function exportMembers() {
+    if (state.members.length === 0) {
+        alert("No members to export!");
+        return;
+    }
+
+    const content = state.members.map(m => m.name).join('\n');
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'daily-standup-team.txt';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+function handleFileImport(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        const text = event.target.result;
+        processImportedText(text);
+        // Reset input so same file can be selected again
+        e.target.value = '';
+        document.getElementById('import-options-modal').classList.add('hidden');
+    };
+    reader.readAsText(file);
+}
+
+function handleTextImport() {
+    const text = document.getElementById('import-textarea').value;
+    if (!text.trim()) {
+        alert("Please enter some names.");
+        return;
+    }
+    processImportedText(text);
+    document.getElementById('text-import-modal').classList.add('hidden');
+}
+
+function processImportedText(text) {
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+
+    if (lines.length === 0) {
+        alert("No valid names found.");
+        return;
+    }
+
+    // Replaces current list entirely.
+
+    state.members = lines.map(name => ({ name: name, active: true }));
+
+    // Reset Game State
+    document.getElementById('winner-display').classList.add('hidden');
+    document.getElementById('winner-name').textContent = '-';
+
+    state.lastWinnerIndex = -1;
+    saveState();
+    renderNamesList();
+    drawWheel();
+    resetTimer(true); // Reset to default duration
+
+    // Reset Total Elapsed Timer
+    stopElapsedTimer();
+    state.elapsedStartTime = null;
+    saveState(); // Save again to be sure
+    updateElapsedDisplay();
+
+    alert(`Imported ${lines.length} members successfully.`);
+}
+
+// --- EXPORT / IMPORT ---
