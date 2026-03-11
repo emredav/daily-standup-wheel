@@ -2,6 +2,11 @@
 
 A fun, interactive spin-the-wheel app for daily standup meetings. Randomly selects team members for their turn to speak.
 
+<img width="2536" height="1249" alt="image" src="https://github.com/user-attachments/assets/d603e16d-31bc-4f50-a492-e99594deef1f" />
+
+Funny Mode:
+<img width="2537" height="1231" alt="image" src="https://github.com/user-attachments/assets/bfcae452-4cd1-482b-a790-769bb5d7ab7c" />
+
 ## Features
 
 - **Spin the Wheel** — Animated wheel with physics-based deceleration
