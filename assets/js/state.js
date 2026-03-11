@@ -11,7 +11,8 @@ let state = {
     },
     settings: {
         winnerAction: 'auto', // Default to auto
-        hideNames: false
+        hideNames: false,
+        funnyMode: false
     },
     lastWinnerIndex: -1, // Persist pending winner removal for auto mode
     elapsedStartTime: null // timestamp when first spin happened

@@ -75,6 +75,11 @@ function spinWheel() {
     // Initial kick
     wheel.velocity = 0.4 + Math.random() * 0.2;
     wheel.isSpinning = true;
+
+    // Funny mode: start whistle sound
+    if (state.settings?.funnyMode && typeof startWhistle === 'function') {
+        startWhistle();
+    }
 }
 
 // --- PHYSICS ---
@@ -89,6 +94,12 @@ function updatePhysics() {
     if (wheel.velocity < 0.001) {
         wheel.isSpinning = false;
         wheel.velocity = 0;
+
+        // Funny mode: stop whistle sound
+        if (typeof stopWhistle === 'function') {
+            stopWhistle();
+        }
+
         determineWinner();
     }
 }
@@ -147,12 +158,18 @@ function drawWheel() {
         ctx.rotate(angle + arcSize / 2);
         ctx.textAlign = 'right';
         ctx.fillStyle = '#000';
-        ctx.font = 'bold 18px Inter';
 
-        let label = member.name;
-        if (state.settings?.hideNames) {
+        let label;
+        if (state.settings?.funnyMode && typeof getFunnyLabel === 'function') {
+            // Funny mode: show random emoji
+            ctx.font = '28px sans-serif';
+            label = getFunnyLabel(i);
+        } else if (state.settings?.hideNames) {
+            ctx.font = 'bold 18px Inter';
             label = '***';
         } else {
+            ctx.font = 'bold 18px Inter';
+            label = member.name;
             if (label.length > 15) label = label.substring(0, 12) + '...';
         }
         ctx.fillText(label, wheel.center - 40, 6);

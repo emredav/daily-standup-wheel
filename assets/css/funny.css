@@ -1,0 +1,391 @@
+/* 
+   Daily Standup Wheel — Funny Mode
+   Disco Animations, 8-Bit Pixel Art Overrides
+*/
+
+/* ========================================
+   PIXEL FONT (loaded conditionally)
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ========================================
+   DISCO BACKGROUND ANIMATION
+   ======================================== */
+.funny-mode {
+    --disco-color-1: #ff00ff;
+    --disco-color-2: #00ffff;
+    --disco-color-3: #ffff00;
+    --disco-color-4: #ff3300;
+    --disco-color-5: #33ff00;
+}
+
+/* Disco overlay on main content */
+.funny-mode .main-content {
+    background:
+        radial-gradient(circle at 20% 30%, var(--disco-color-1), transparent 40%),
+        radial-gradient(circle at 80% 70%, var(--disco-color-2), transparent 40%),
+        radial-gradient(circle at 50% 50%, var(--disco-color-3), transparent 50%),
+        #0B0C15;
+    animation: disco-bg 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes disco-bg {
+    0% {
+        --disco-color-1: #ff00ff;
+        --disco-color-2: #00ffff;
+        --disco-color-3: #ffff00;
+    }
+    25% {
+        --disco-color-1: #00ff99;
+        --disco-color-2: #ff6600;
+        --disco-color-3: #9900ff;
+    }
+    50% {
+        --disco-color-1: #ff3399;
+        --disco-color-2: #33ccff;
+        --disco-color-3: #66ff00;
+    }
+    75% {
+        --disco-color-1: #ffcc00;
+        --disco-color-2: #ff0066;
+        --disco-color-3: #00ffcc;
+    }
+    100% {
+        --disco-color-1: #6600ff;
+        --disco-color-2: #ff9900;
+        --disco-color-3: #00ff66;
+    }
+}
+
+/* Neon flash overlay */
+.funny-mode .main-content::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(255, 0, 255, 0.15) 0%,
+        transparent 70%
+    );
+    animation: neon-pulse 0.8s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes neon-pulse {
+    0%   { opacity: 0.3; transform: scale(1); }
+    100% { opacity: 1;   transform: scale(1.05); }
+}
+
+/* Disco ball dots */
+.funny-mode .main-content::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle 3px, rgba(255,255,255,0.3) 100%, transparent 100%);
+    background-size: 40px 40px;
+    animation: disco-dots 2s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes disco-dots {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+}
+
+/* ========================================
+   8-BIT PIXEL ART OVERRIDES
+   ======================================== */
+
+/* Pixel font everywhere */
+.funny-mode {
+    font-family: 'Press Start 2P', monospace !important;
+}
+
+.funny-mode * {
+    font-family: inherit !important;
+    border-radius: 0 !important;
+}
+
+/* Pixel-style UI panels */
+.funny-mode .panel {
+    border: 3px solid #fff;
+    box-shadow:
+        4px 4px 0 #000,
+        inset 0 0 0 2px rgba(255,255,255,0.1);
+    backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.85);
+}
+
+/* Pixel buttons */
+.funny-mode .btn {
+    border: 2px solid #fff;
+    box-shadow: 3px 3px 0 #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: none;
+}
+
+.funny-mode .btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #000;
+}
+
+.funny-mode .btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+}
+
+/* Pixel button variants */
+.funny-mode .btn-primary {
+    background: #ff00ff;
+    color: #fff;
+    border-color: #cc00cc;
+}
+
+.funny-mode .btn-primary:hover {
+    background: #ff33ff;
+    box-shadow: 1px 1px 0 #000;
+}
+
+.funny-mode .btn-secondary {
+    background: #333;
+    border-color: #666;
+}
+
+/* Pixel spin button */
+.funny-mode .spin-btn {
+    border: 4px solid #ff00ff !important;
+    box-shadow: 0 0 0 3px #000, 0 0 30px rgba(255,0,255,0.5);
+    color: #ff00ff;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    background: #111 !important;
+}
+
+.funny-mode .spin-btn:hover {
+    background: #ff00ff !important;
+    color: #000;
+    box-shadow: 0 0 0 3px #000, 0 0 50px rgba(255,0,255,0.8);
+}
+
+/* Pixel pointer */
+.funny-mode .wheel-pointer {
+    border-top-color: #ff00ff;
+    filter: drop-shadow(0 0 8px rgba(255,0,255,0.8));
+}
+
+/* Pixel inputs */
+.funny-mode input[type="text"],
+.funny-mode input[type="number"] {
+    border: 2px solid #666;
+    background: #111;
+    font-size: 0.6rem;
+    padding: 0.5rem;
+}
+
+.funny-mode input[type="text"]:focus,
+.funny-mode input[type="number"]:focus {
+    border-color: #ff00ff;
+    box-shadow: 0 0 10px rgba(255,0,255,0.3);
+}
+
+/* Title pixel effect */
+.funny-mode h1 {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: #ff00ff !important;
+    text-shadow:
+        2px 2px 0 #000,
+        0 0 10px rgba(255,0,255,0.5);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.funny-mode .subtitle {
+    font-size: 0.5rem;
+    color: #00ffff;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.funny-mode h3 {
+    font-size: 0.55rem;
+    color: #ffff00;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Timer pixel style */
+.funny-mode .time-display,
+.funny-mode .total-time-display {
+    font-size: 1.4rem;
+    text-shadow: 2px 2px 0 #000, 0 0 15px currentColor;
+    font-weight: 400;
+}
+
+/* Winner card pixel */
+.funny-mode .winner-card {
+    border: 3px solid #00ff00;
+    box-shadow: 4px 4px 0 #000, 0 0 15px rgba(0,255,0,0.3);
+    background: rgba(0,255,0,0.1);
+}
+
+/* Member list pixel */
+.funny-mode .member-item {
+    border-bottom: 1px dashed #444;
+}
+
+.funny-mode .member-item span {
+    font-size: 0.55rem;
+}
+
+/* Modal pixel style */
+.funny-mode .modal-content {
+    border: 4px solid #ff00ff;
+    box-shadow: 6px 6px 0 #000;
+    background: #111;
+}
+
+.funny-mode .winner-title {
+    color: #ffff00;
+    text-shadow: 2px 2px 0 #000;
+    font-size: 0.8rem;
+}
+
+.funny-mode .modal-winner-name {
+    font-size: 1.5rem;
+    color: #00ffff;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* Settings panel pixel */
+.funny-mode .settings-panel {
+    border: 3px solid #fff;
+    box-shadow: 4px 4px 0 #000;
+    background: rgba(0,0,0,0.95);
+}
+
+.funny-mode .settings-panel h4 {
+    color: #ffff00;
+    font-size: 0.55rem;
+}
+
+/* Funny mode toggle button glow when active */
+#funny-mode-btn.active {
+    background: rgba(255, 0, 255, 0.3);
+    border-color: #ff00ff;
+    color: #ff00ff;
+    box-shadow: 0 0 15px rgba(255,0,255,0.4);
+    animation: funny-btn-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes funny-btn-pulse {
+    0%   { box-shadow: 0 0 10px rgba(255,0,255,0.3); }
+    100% { box-shadow: 0 0 25px rgba(255,0,255,0.6); }
+}
+
+/* Sidebar pixel style */
+.funny-mode .sidebar {
+    border-right: 3px solid #fff;
+    background: rgba(0, 0, 0, 0.95);
+}
+
+/* Scrollbar pixel override */
+.funny-mode ::-webkit-scrollbar {
+    width: 8px;
+}
+
+.funny-mode ::-webkit-scrollbar-track {
+    background: #111;
+}
+
+.funny-mode ::-webkit-scrollbar-thumb {
+    background: #ff00ff;
+    border: 1px solid #000;
+}
+
+/* Toggle switch pixel */
+.funny-mode .slider {
+    background-color: #333;
+    border: 2px solid #666;
+}
+
+.funny-mode input:checked + .slider {
+    background-color: #ff00ff;
+    border-color: #cc00cc;
+}
+
+/* Checkbox pixel */
+.funny-mode .checkbox-wrapper input[type="checkbox"] {
+    accent-color: #ff00ff;
+}
+
+.funny-mode .checkbox-wrapper label {
+    font-size: 0.5rem;
+}
+
+/* Radio pixel */
+.funny-mode .radio-group label {
+    font-size: 0.55rem;
+}
+
+.funny-mode .radio-group input[type="radio"] {
+    accent-color: #ff00ff;
+}
+
+/* ========================================
+   TOAST NOTIFICATION
+   ======================================== */
+.funny-toast {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120%);
+    background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(0, 255, 255, 0.15));
+    border: 1px solid rgba(255, 0, 255, 0.4);
+    backdrop-filter: blur(16px);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    z-index: 9999;
+    box-shadow:
+        0 0 20px rgba(255, 0, 255, 0.25),
+        0 8px 32px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    animation: toast-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    white-space: nowrap;
+}
+
+.funny-toast .toast-emoji {
+    font-size: 1.4rem;
+}
+
+.funny-toast .toast-text {
+    background: linear-gradient(90deg, #ff00ff, #00ffff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.funny-toast.toast-out {
+    animation: toast-out 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes toast-in {
+    0%   { transform: translateX(-50%) translateY(-120%); opacity: 0; }
+    100% { transform: translateX(-50%) translateY(0);     opacity: 1; }
+}
+
+@keyframes toast-out {
+    0%   { transform: translateX(-50%) translateY(0);     opacity: 1; }
+    100% { transform: translateX(-50%) translateY(-120%); opacity: 0; }
+}

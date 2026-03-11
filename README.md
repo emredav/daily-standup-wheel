@@ -13,6 +13,7 @@ A fun, interactive spin-the-wheel app for daily standup meetings. Randomly selec
 - **Winner Handling** — Choose between popup confirmation or auto-remove modes
 - **Persistent State** — All data saved to `localStorage`
 - **Responsive Design** — Works on desktop and mobile
+- **Funny Mode** — Disco neon lights, 8-bit pixel art UI, emoji wheel labels & whistle sound
 
 ## Getting Started
 
@@ -36,6 +37,7 @@ daily-wheel/
 │   │   ├── wheel.css           # Canvas, pointer, spin button
 │   │   ├── members.css         # Member list & winner card
 │   │   ├── modals.css          # Modal overlays & animations
+│   │   ├── funny.css           # Funny mode: disco & 8-bit styles
 │   │   └── responsive.css      # Media queries
 │   └── js/
 │       ├── config.js           # Constants & color palette
@@ -45,6 +47,7 @@ daily-wheel/
 │       ├── members.js          # Team member CRUD & list rendering
 │       ├── modals.js           # Winner determination & modal logic
 │       ├── io.js               # Import/export functionality
+│       ├── funny.js            # Funny mode: disco, whistle, emoji
 │       └── app.js              # Entry point & event listeners
 ```
 

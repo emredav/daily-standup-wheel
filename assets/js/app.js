@@ -14,6 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
         startElapsedTimer();
     }
     updateElapsedDisplay(); // Initial draw
+
+    // Restore funny mode state
+    if (state.settings?.funnyMode) {
+        toggleFunnyMode(true);
+    } else {
+        // Show toast after 1 second if funny mode is not active
+        setTimeout(() => {
+            if (typeof showFunnyToast === 'function') {
+                showFunnyToast();
+            }
+        }, 1000);
+    }
+
     animate();
 });
 
@@ -88,6 +101,14 @@ function setupEventListeners() {
 
     // Restart Round
     document.getElementById('restart-round-btn')?.addEventListener('click', restartRound);
+
+    // Funny Mode Toggle
+    document.getElementById('funny-mode-btn')?.addEventListener('click', () => {
+        state.settings.funnyMode = !state.settings.funnyMode;
+        saveState();
+        toggleFunnyMode(state.settings.funnyMode);
+        drawWheel();
+    });
 
     // Export/Import
     document.getElementById('export-btn')?.addEventListener('click', exportMembers);
