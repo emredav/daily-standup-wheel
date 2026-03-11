@@ -1,0 +1,41 @@
+/* 
+   Daily Standup Wheel — Layout
+   App Container, Sidebar, Main Content
+*/
+
+.app-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.sidebar {
+    width: 350px;
+    background: rgba(11, 12, 21, 0.95);
+    border-right: 1px solid var(--panel-border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.main-content {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, #1a1b2e 0%, #0B0C15 70%);
+}
+
+/* Main Controls Area */
+.main-controls {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    gap: 1rem;
+    z-index: 20;
+}

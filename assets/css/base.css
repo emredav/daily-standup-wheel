@@ -1,0 +1,64 @@
+/* 
+   Daily Standup Wheel — Base Styles
+   Reset, CSS Variables, Typography
+*/
+
+:root {
+    --bg-color: #0B0C15;
+    --panel-bg: rgba(255, 255, 255, 0.05);
+    --panel-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0A0;
+
+    --accent-primary: #00F0FF;
+    /* Cyan */
+    --accent-secondary: #FF0099;
+    /* Pink */
+    --accent-tertiary: #CCFF00;
+    /* Lime */
+
+    --shadow-glow: 0 0 15px rgba(0, 240, 255, 0.3);
+
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    height: 100vh;
+    overflow: hidden;
+    /* Prevent scrolling, fixed app feel */
+}
+
+/* Typography */
+h1 {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+}

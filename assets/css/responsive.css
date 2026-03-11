@@ -1,0 +1,49 @@
+/* 
+   Daily Standup Wheel — Responsive
+   Media Queries for Mobile and Tablet
+*/
+
+@media (max-width: 900px) {
+    .app-container {
+        flex-direction: column-reverse;
+        /* Sidebar at bottom or scrollable */
+        overflow-y: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        overflow-y: visible;
+        border-right: none;
+        border-top: 1px solid var(--panel-border);
+    }
+
+    .main-content {
+        min-height: 500px;
+    }
+
+    .wheel-container {
+        width: 350px;
+        height: 350px;
+    }
+
+    #wheel-canvas {
+        width: 350px;
+        height: 350px;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 2rem;
+    }
+
+    .modal-winner-name {
+        font-size: 2rem;
+    }
+
+    .main-controls {
+        top: 1rem;
+        right: 1rem;
+    }
+}

@@ -1,0 +1,323 @@
+/* 
+   Daily Standup Wheel — Components
+   Buttons, Inputs, Toggles, Panels, Settings
+*/
+
+/* Panels */
+.panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.panel-header h3 {
+    margin-bottom: 0;
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="number"] {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: white;
+    padding: 0.75rem;
+    width: 100%;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    border-color: var(--accent-primary);
+}
+
+/* Buttons */
+.btn {
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--accent-primary);
+    color: #000;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 0.8rem 1.5rem;
+}
+
+.btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 15px var(--accent-primary);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-accent {
+    background: var(--accent-tertiary);
+    color: #000;
+    font-weight: 700;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 0 15px rgba(204, 255, 0, 0.3);
+}
+
+.btn-accent:hover {
+    background: #fff;
+    box-shadow: 0 0 25px rgba(204, 255, 0, 0.5);
+}
+
+.btn-text {
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-decoration: underline;
+}
+
+.btn-text:hover {
+    color: #fff;
+}
+
+.icon-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Labeled Buttons */
+.labeled-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    height: 40px;
+    border-radius: 20px;
+}
+
+.labeled-btn span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--accent-primary);
+}
+
+input:checked+.slider:before {
+    transform: translateX(20px);
+}
+
+/* Checkbox */
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    accent-color: var(--accent-primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-wrapper label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked+label {
+    color: var(--accent-primary);
+}
+
+/* Radio Group */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.radio-group input[type="radio"] {
+    accent-color: var(--accent-primary);
+}
+
+/* Settings Panel */
+.settings-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: rgba(11, 12, 21, 0.95);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 1rem;
+    width: 250px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    color: var(--text-primary);
+}
+
+.settings-panel.hidden {
+    display: none;
+}
+
+.settings-panel h4 {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+}
+
+/* Timer Controls */
+.timer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.time-display {
+    font-size: 2.5rem;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.timer-settings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--panel-border);
+    padding-top: 1rem;
+}
+
+.timer-settings input {
+    width: 80px;
+    padding: 0.4rem;
+    text-align: center;
+}
+
+/* Timer Actions */
+.timer-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Total Elapsed Timer Panel */
+.total-timer-panel {
+    border-color: var(--accent-primary);
+    background: rgba(204, 255, 0, 0.05);
+}
+
+.total-timer-panel .panel-header h3 {
+    color: var(--accent-primary);
+}
+
+.total-time-display {
+    font-size: 2.5rem;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--accent-primary);
+    text-shadow: 0 0 10px rgba(204, 255, 0, 0.2);
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.icon-btn.mini {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+}
+
+.icon-btn.mini:hover {
+    background: var(--accent-secondary);
+}
