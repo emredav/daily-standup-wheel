@@ -6,6 +6,7 @@
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
     initDOM();
+    updateDailySubtitle();
     loadState();
     setupEventListeners();
     renderNamesList();
@@ -139,4 +140,21 @@ function setupEventListeners() {
     });
 
     document.getElementById('btn-confirm-text-import')?.addEventListener('click', handleTextImport);
+}
+
+// --- UI UPDATE ---
+function updateDailySubtitle() {
+    try {
+        const subtitleEl = document.querySelector('.subtitle');
+        if (!subtitleEl || typeof DAILY_MESSAGES === 'undefined' || DAILY_MESSAGES.length === 0) return;
+
+        const dayIndex = new Date().getDay();
+
+        const message = DAILY_MESSAGES?.[dayIndex];
+
+        subtitleEl.textContent = message || "'Ever tried. Ever failed. No matter. Try Again...' -Samuel Beckett";
+    } catch (error) {
+        // I don't think it will come here but just in case.
+        console.error("Subtitle update error:", error);
+    }
 }

@@ -15,3 +15,15 @@ const COLORS = [
     '#FFD600', // Yellow
     '#FF3D00'  // Red-Orange
 ];
+
+// We map messages by index because updateDailySubtitle() uses Date.getDay(),
+// which returns values from 0 to 6 where 0 = Sunday and 6 = Saturday.
+const DAILY_MESSAGES = [
+    "SUNDAY!", // 0 Sunday
+    "Have a great day!", // 1 Monday
+    "Another day, another commit!", // 2 Tuesday
+    "Think twice, code once.", // 3 Wednesday
+    "Stay awesome, team!", // 4 Thursday
+    "Make today amazing!", // 5 Friday
+    "SATURDAY!", // 6 Saturday
+];
